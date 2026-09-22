@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>毎日計算 結果</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0 25px;
+      font-size: 28px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      text-align: center;
+    }
+
+    .summary-item {
+      padding: 15px 10px;
+      background: #f5f5f5;
+      border-radius: 12px;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .summary-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .reload-button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .reload-button:disabled {
+      opacity: 0.5;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 12px;
+      min-height: 22px;
+      color: #666;
+    }
+
+    .day-card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .day-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .not-recorded {
+      color: #999;
+      font-size: 15px;
+    }
+
+    .record-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .info-box {
+      background: #f5f5f5;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .info-value {
+      margin-top: 3px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .questions {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+    }
+
+    .question {
+      text-align: center;
+    }
+
+    .question-number {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+
+    .result {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: bold;
+      background: #eee;
+    }
+
+    .result.correct {
+      background: #222;
+      color: white;
+    }
+
+    .result.wrong {
+      background: #ddd;
+      color: #555;
+    }
+
+    .updated {
+      margin-top: 12px;
+      color: #999;
+      font-size: 12px;
+      text-align: right;
+    }
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .day-card {
+        padding: 15px;
+      }
+
+      .questions {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+      }
+
+      .result {
+        font-size: 18px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>毎日計算 結果</h1>
+
+
+    <!-- 全体集計 -->
+    <div class="card">
+
+      <div class="summary">
+
+        <div class="summary-item">
+
+          <div class="summary-label">
+            記録日数
+          </div>
+
+          <div
+            id="recordedDays"
+            class="summary-value">
+            0 / 30
+          </div>
+
+        </div>
+
+
+        <div class="summary-item">
+
+          <div class="summary-label">
+            平均正解数
+          </div>
+
+          <div
+            id="averageScore"
+            class="summary-value">
+            -
+          </div>
+
+        </div>
+
+
+        <div class="summary-item">
+
+          <div class="summary-label">
+            平均時間
+          </div>
+
+          <div
+            id="averageTime"
+            class="summary-value">
+            -
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <button
+        id="reloadButton"
+        class="reload-button">
+        結果を更新
+      </button>
+
+
+      <div
+        id="status"
+        class="status">
+      </div>
+
+    </div>
+
+
+    <!-- 30日分 -->
+    <div id="resultsContainer"></div>
+
+  </div>
+
+
+  <!-- Firebase -->
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+    import {
+      getAnalytics
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+
+
+    import {
+      getFirestore,
+      collection,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+    // ========================================
+    // Firebase設定
+    // ========================================
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyBCRz6PBosl5eY1QOsDWcmyPR2Oz0COHUI",
+
+      authDomain:
+        "mainichi-keisan.firebaseapp.com",
+
+      projectId:
+        "mainichi-keisan",
+
+      storageBucket:
+        "mainichi-keisan.firebasestorage.app",
+
+      messagingSenderId:
+        "104116449900",
+
+      appId:
+        "1:104116449900:web:c0fd02366bcbf9d7575e49",
+
+      measurementId:
+        "G-VGXQQNRQFN"
+
+    };
+
+
+    // ========================================
+    // Firebase初期化
+    // ========================================
+
+    const app =
+      initializeApp(firebaseConfig);
+
+    const analytics =
+      getAnalytics(app);
+
+    const db =
+      getFirestore(app);
+
+
+    // ========================================
+    // DOM
+    // ========================================
+
+    const resultsContainer =
+      document.getElementById(
+        "resultsContainer"
+      );
+
+    const recordedDaysElement =
+      document.getElementById(
+        "recordedDays"
+      );
+
+    const averageScoreElement =
+      document.getElementById(
+        "averageScore"
+      );
+
+    const averageTimeElement =
+      document.getElementById(
+        "averageTime"
+      );
+
+    const reloadButton =
+      document.getElementById(
+        "reloadButton"
+      );
+
+    const status =
+      document.getElementById(
+        "status"
+      );
+
+
+    // ========================================
+    // 時間を MM:SS にする
+    // ========================================
+
+    function formatTime(seconds) {
+
+      const minutes =
+        Math.floor(seconds / 60);
+
+      const remainingSeconds =
+        seconds % 60;
+
+
+      return (
+        String(minutes).padStart(2, "0")
+        +
+        ":"
+        +
+        String(remainingSeconds).padStart(2, "0")
+      );
+
+    }
+
+
+    // ========================================
+    // 秒数を「分:秒」にする
+    // ========================================
+
+    function formatAverageTime(seconds) {
+
+      if (!Number.isFinite(seconds)) {
+        return "-";
+      }
+
+
+      return formatTime(
+        Math.round(seconds)
+      );
+
+    }
+
+
+    // ========================================
+    // 1日分のカードを作る
+    // ========================================
+
+    function createDayCard(day, data) {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "day-card";
+
+
+      // ------------------------------
+      // ヘッダー
+      // ------------------------------
+
+      const header =
+        document.createElement("div");
+
+      header.className =
+        "day-header";
+
+
+      const title =
+        document.createElement("div");
+
+      title.className =
+        "day-title";
+
+      title.textContent =
+        `${day}日目`;
+
+
+      header.appendChild(title);
+
+
+      if (!data) {
+
+        const notRecorded =
+          document.createElement("div");
+
+        notRecorded.className =
+          "not-recorded";
+
+        notRecorded.textContent =
+          "未記録";
+
+        header.appendChild(
+          notRecorded
+        );
+
+
+        card.appendChild(header);
+
+        return card;
+
+      }
+
+
+      card.appendChild(header);
+
+
+      // ------------------------------
+      // 時間・正解数
+      // ------------------------------
+
+      const info =
+        document.createElement("div");
+
+      info.className =
+        "record-info";
+
+
+      const timeBox =
+        document.createElement("div");
+
+      timeBox.className =
+        "info-box";
+
+
+      const timeLabel =
+        document.createElement("div");
+
+      timeLabel.className =
+        "info-label";
+
+      timeLabel.textContent =
+        "時間";
+
+
+      const timeValue =
+        document.createElement("div");
+
+      timeValue.className =
+        "info-value";
+
+      timeValue.textContent =
+        data.time ||
+        formatTime(
+          Number(data.timeSeconds) || 0
+        );
+
+
+      timeBox.appendChild(timeLabel);
+
+      timeBox.appendChild(timeValue);
+
+
+      const scoreBox =
+        document.createElement("div");
+
+      scoreBox.className =
+        "info-box";
+
+
+      const scoreLabel =
+        document.createElement("div");
+
+      scoreLabel.className =
+        "info-label";
+
+      scoreLabel.textContent =
+        "正解数";
+
+
+      const scoreValue =
+        document.createElement("div");
+
+      scoreValue.className =
+        "info-value";
+
+      scoreValue.textContent =
+        `${data.correct} / ${data.total}`;
+
+
+      scoreBox.appendChild(scoreLabel);
+
+      scoreBox.appendChild(scoreValue);
+
+
+      info.appendChild(timeBox);
+
+      info.appendChild(scoreBox);
+
+
+      card.appendChild(info);
+
+
+      // ------------------------------
+      // 10問の結果
+      // ------------------------------
+
+      const questions =
+        document.createElement("div");
+
+      questions.className =
+        "questions";
+
+
+      const results =
+        Array.isArray(data.results)
+          ? data.results
+          : [];
+
+
+      for (
+        let i = 0;
+        i < 10;
+        i++
+      ) {
+
+        const question =
+          document.createElement("div");
+
+        question.className =
+          "question";
+
+
+        const number =
+          document.createElement("div");
+
+        number.className =
+          "question-number";
+
+        number.textContent =
+          `${i + 1}問目`;
+
+
+        const result =
+          document.createElement("div");
+
+        result.className =
+          "result";
+
+
+        if (results[i] === true) {
+
+          result.classList.add(
+            "correct"
+          );
+
+          result.textContent =
+            "○";
+
+        }
+        else if (results[i] === false) {
+
+          result.classList.add(
+            "wrong"
+          );
+
+          result.textContent =
+            "×";
+
+        }
+        else {
+
+          result.textContent =
+            "-";
+
+        }
+
+
+        question.appendChild(number);
+
+        question.appendChild(result);
+
+
+        questions.appendChild(question);
+
+      }
+
+
+      card.appendChild(questions);
+
+
+      // ------------------------------
+      // 更新日時
+      // ------------------------------
+
+      if (data.updatedAt) {
+
+        const updated =
+          document.createElement("div");
+
+        updated.className =
+          "updated";
+
+
+        const date =
+          new Date(data.updatedAt);
+
+
+        if (!Number.isNaN(date.getTime())) {
+
+          updated.textContent =
+            `更新：${date.toLocaleString(
+              "ja-JP"
+            )}`;
+
+        }
+
+
+        card.appendChild(updated);
+
+      }
+
+
+      return card;
+
+    }
+
+
+    // ========================================
+    // Firebaseから全記録を取得
+    // ========================================
+
+    async function loadResults() {
+
+      reloadButton.disabled = true;
+
+      status.textContent =
+        "読み込んでいます...";
+
+
+      try {
+
+        const recordsRef =
+          collection(
+            db,
+            "records"
+          );
+
+
+        const snapshot =
+          await getDocs(
+            recordsRef
+          );
+
+
+        // ------------------------------
+        // day番号 → データ
+        // ------------------------------
+
+        const records =
+          new Map();
+
+
+        snapshot.forEach(
+          (docSnapshot) => {
+
+            const data =
+              docSnapshot.data();
+
+
+            if (
+              data.day !== undefined
+            ) {
+
+              records.set(
+                Number(data.day),
+                data
+              );
+
+            }
+
+          }
+        );
+
+
+        // ------------------------------
+        // 全体集計
+        // ------------------------------
+
+        let recordedDays = 0;
+
+        let totalCorrect = 0;
+
+        let totalTime = 0;
+
+
+        records.forEach(
+          (data) => {
+
+            recordedDays++;
+
+            totalCorrect +=
+              Number(data.correct) || 0;
+
+            totalTime +=
+              Number(data.timeSeconds) || 0;
+
+          }
+        );
+
+
+        recordedDaysElement.textContent =
+          `${recordedDays} / 30`;
+
+
+        if (recordedDays > 0) {
+
+          const averageCorrect =
+            totalCorrect /
+            recordedDays;
+
+
+          averageScoreElement.textContent =
+            `${averageCorrect.toFixed(1)} / 10`;
+
+
+          const averageTime =
+            totalTime /
+            recordedDays;
+
+
+          averageTimeElement.textContent =
+            formatAverageTime(
+              averageTime
+            );
+
+        }
+        else {
+
+          averageScoreElement.textContent =
+            "-";
+
+          averageTimeElement.textContent =
+            "-";
+
+        }
+
+
+        // ------------------------------
+        // 30日分を表示
+        // ------------------------------
+
+        resultsContainer.innerHTML = "";
+
+
+        for (
+          let day = 1;
+          day <= 30;
+          day++
+        ) {
+
+          const data =
+            records.get(day) || null;
+
+
+          const card =
+            createDayCard(
+              day,
+              data
+            );
+
+
+          resultsContainer.appendChild(
+            card
+          );
+
+        }
+
+
+        status.textContent =
+          `更新しました（${recordedDays}日分）`;
+
+      }
+      catch (error) {
+
+        console.error(error);
+
+
+        status.textContent =
+          "結果を読み込めませんでした。";
+
+
+        resultsContainer.innerHTML =
+          "";
+
+
+        const errorCard =
+          document.createElement("div");
+
+        errorCard.className =
+          "card";
+
+
+        errorCard.textContent =
+          "Firebaseからデータを取得できませんでした。Firestoreの設定とルールを確認してください。";
+
+
+        resultsContainer.appendChild(
+          errorCard
+        );
+
+      }
+      finally {
+
+        reloadButton.disabled = false;
+
+      }
+
+    }
+
+
+    // ========================================
+    // 更新ボタン
+    // ========================================
+
+    reloadButton.addEventListener(
+      "click",
+      () => {
+
+        loadResults();
+
+      }
+    );
+
+
+    // ========================================
+    // 初回読み込み
+    // ========================================
+
+    loadResults();
+
+  </script>
+
+</body>
+</html>
