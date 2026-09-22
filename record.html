@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>毎日計算 記録</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0 25px;
+      font-size: 28px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      background: white;
+    }
+
+    .timer {
+      text-align: center;
+      font-size: 48px;
+      font-weight: bold;
+      font-variant-numeric: tabular-nums;
+      margin: 20px 0;
+    }
+
+    .timer-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .start-button {
+      flex: 1;
+      background: #222;
+      color: white;
+    }
+
+    .stop-button {
+      flex: 1;
+      background: #ddd;
+      color: #222;
+    }
+
+    .results-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .question-result {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .question-result:last-child {
+      border-bottom: none;
+    }
+
+    .question-number {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .answer-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .answer-button {
+      width: 55px;
+      padding: 10px 0;
+      background: #eee;
+      color: #555;
+    }
+
+    .answer-button.selected-correct {
+      background: #222;
+      color: white;
+    }
+
+    .answer-button.selected-wrong {
+      background: #777;
+      color: white;
+    }
+
+    .summary {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .score {
+      font-size: 36px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .time-result {
+      font-size: 20px;
+      color: #555;
+    }
+
+    .save-button {
+      width: 100%;
+      margin-top: 15px;
+      background: #222;
+      color: white;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 24px;
+    }
+
+    .history-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .history-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-main {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+    }
+
+    .history-detail {
+      margin-top: 6px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 15px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>毎日計算 記録</h1>
+
+    <!-- 日付選択 -->
+    <div class="card">
+
+      <label class="label" for="daySelect">
+        何日目？
+      </label>
+
+      <select id="daySelect">
+        <option value="1">1日目</option>
+        <option value="2">2日目</option>
+        <option value="3">3日目</option>
+        <option value="4">4日目</option>
+        <option value="5">5日目</option>
+        <option value="6">6日目</option>
+        <option value="7">7日目</option>
+        <option value="8">8日目</option>
+        <option value="9">9日目</option>
+        <option value="10">10日目</option>
+        <option value="11">11日目</option>
+        <option value="12">12日目</option>
+        <option value="13">13日目</option>
+        <option value="14">14日目</option>
+        <option value="15">15日目</option>
+        <option value="16">16日目</option>
+        <option value="17">17日目</option>
+        <option value="18">18日目</option>
+        <option value="19">19日目</option>
+        <option value="20">20日目</option>
+        <option value="21">21日目</option>
+        <option value="22">22日目</option>
+        <option value="23">23日目</option>
+        <option value="24">24日目</option>
+        <option value="25">25日目</option>
+        <option value="26">26日目</option>
+        <option value="27">27日目</option>
+        <option value="28">28日目</option>
+        <option value="29">29日目</option>
+        <option value="30">30日目</option>
+      </select>
+
+    </div>
+
+
+    <!-- タイマー -->
+    <div class="card">
+
+      <div class="results-title">
+        タイマー
+      </div>
+
+      <div id="timer" class="timer">
+        00:00
+      </div>
+
+      <div class="timer-buttons">
+
+        <button
+          id="startButton"
+          class="start-button">
+          スタート
+        </button>
+
+        <button
+          id="stopButton"
+          class="stop-button"
+          disabled>
+          停止
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- 正誤入力 -->
+    <div class="card">
+
+      <div class="results-title">
+        正誤入力
+      </div>
+
+      <div id="questionResults"></div>
+
+    </div>
+
+
+    <!-- 集計 -->
+    <div class="card">
+
+      <div class="summary">
+
+        <div>
+          正解数
+        </div>
+
+        <div
+          id="score"
+          class="score">
+          0 / 10
+        </div>
+
+        <div
+          id="timeResult"
+          class="time-result">
+          時間：00:00
+        </div>
+
+        <button
+          id="saveButton"
+          class="save-button">
+          Firebaseに記録する
+        </button>
+
+        <div
+          id="message"
+          class="message">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 過去の記録 -->
+    <div class="card">
+
+      <div class="history-title">
+        過去の記録
+      </div>
+
+      <div id="history">
+        <div class="empty">
+          読み込み中...
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Firebase -->
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+    import {
+      getAnalytics
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      getDocs,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+    // ========================================
+    // Firebase設定
+    // ========================================
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyBCRz6PBosl5eY1QOsDWcmyPR2Oz0COHUI",
+
+      authDomain:
+        "mainichi-keisan.firebaseapp.com",
+
+      projectId:
+        "mainichi-keisan",
+
+      storageBucket:
+        "mainichi-keisan.firebasestorage.app",
+
+      messagingSenderId:
+        "104116449900",
+
+      appId:
+        "1:104116449900:web:c0fd02366bcbf9d7575e49",
+
+      measurementId:
+        "G-VGXQQNRQFN"
+
+    };
+
+
+    // ========================================
+    // Firebase初期化
+    // ========================================
+
+    const app = initializeApp(firebaseConfig);
+
+    const analytics = getAnalytics(app);
+
+    const db = getFirestore(app);
+
+
+    // ========================================
+    // DOM
+    // ========================================
+
+    const daySelect =
+      document.getElementById("daySelect");
+
+    const timerElement =
+      document.getElementById("timer");
+
+    const startButton =
+      document.getElementById("startButton");
+
+    const stopButton =
+      document.getElementById("stopButton");
+
+    const questionResults =
+      document.getElementById("questionResults");
+
+    const scoreElement =
+      document.getElementById("score");
+
+    const timeResult =
+      document.getElementById("timeResult");
+
+    const saveButton =
+      document.getElementById("saveButton");
+
+    const message =
+      document.getElementById("message");
+
+    const history =
+      document.getElementById("history");
+
+
+    // ========================================
+    // データ
+    // ========================================
+
+    const TOTAL_QUESTIONS = 10;
+
+    let results =
+      new Array(TOTAL_QUESTIONS).fill(null);
+
+    let timerInterval = null;
+
+    let startTime = null;
+
+    let elapsedSeconds = 0;
+
+
+    // ========================================
+    // ○×ボタンを作る
+    // ========================================
+
+    function createQuestionButtons() {
+
+      questionResults.innerHTML = "";
+
+      for (
+        let i = 0;
+        i < TOTAL_QUESTIONS;
+        i++
+      ) {
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "question-result";
+
+
+        const number =
+          document.createElement("div");
+
+        number.className =
+          "question-number";
+
+        number.textContent =
+          `${i + 1}問目`;
+
+
+        const buttons =
+          document.createElement("div");
+
+        buttons.className =
+          "answer-buttons";
+
+
+        const correctButton =
+          document.createElement("button");
+
+        correctButton.className =
+          "answer-button";
+
+        correctButton.textContent =
+          "○";
+
+
+        const wrongButton =
+          document.createElement("button");
+
+        wrongButton.className =
+          "answer-button";
+
+        wrongButton.textContent =
+          "×";
+
+
+        correctButton.addEventListener(
+          "click",
+          () => {
+
+            results[i] = true;
+
+            updateButtons();
+
+            updateScore();
+
+          }
+        );
+
+
+        wrongButton.addEventListener(
+          "click",
+          () => {
+
+            results[i] = false;
+
+            updateButtons();
+
+            updateScore();
+
+          }
+        );
+
+
+        buttons.appendChild(
+          correctButton
+        );
+
+        buttons.appendChild(
+          wrongButton
+        );
+
+
+        row.appendChild(number);
+
+        row.appendChild(buttons);
+
+
+        questionResults.appendChild(row);
+
+
+        function updateButtons() {
+
+          correctButton.classList.remove(
+            "selected-correct"
+          );
+
+          wrongButton.classList.remove(
+            "selected-wrong"
+          );
+
+
+          if (results[i] === true) {
+
+            correctButton.classList.add(
+              "selected-correct"
+            );
+
+          }
+
+
+          if (results[i] === false) {
+
+            wrongButton.classList.add(
+              "selected-wrong"
+            );
+
+          }
+
+        }
+
+      }
+
+    }
+
+
+    // ========================================
+    // 正解数更新
+    // ========================================
+
+    function updateScore() {
+
+      const correct =
+        results.filter(
+          value => value === true
+        ).length;
+
+
+      scoreElement.textContent =
+        `${correct} / ${TOTAL_QUESTIONS}`;
+
+    }
+
+
+    // ========================================
+    // 秒数 → MM:SS
+    // ========================================
+
+    function formatTime(seconds) {
+
+      const minutes =
+        Math.floor(seconds / 60);
+
+      const remainingSeconds =
+        seconds % 60;
+
+
+      return (
+        String(minutes).padStart(2, "0")
+        +
+        ":"
+        +
+        String(remainingSeconds).padStart(2, "0")
+      );
+
+    }
+
+
+    // ========================================
+    // タイマー表示
+    // ========================================
+
+    function updateTimer() {
+
+      timerElement.textContent =
+        formatTime(elapsedSeconds);
+
+      timeResult.textContent =
+        `時間：${formatTime(elapsedSeconds)}`;
+
+    }
+
+
+    // ========================================
+    // タイマースタート
+    // ========================================
+
+    function startTimer() {
+
+      if (timerInterval !== null) {
+        return;
+      }
+
+
+      startTime =
+        Date.now() -
+        elapsedSeconds * 1000;
+
+
+      timerInterval =
+        setInterval(
+          () => {
+
+            elapsedSeconds =
+              Math.floor(
+                (Date.now() - startTime)
+                / 1000
+              );
+
+            updateTimer();
+
+          },
+          250
+        );
+
+
+      startButton.disabled = true;
+
+      stopButton.disabled = false;
+
+      message.textContent = "";
+
+    }
+
+
+    // ========================================
+    // タイマーストップ
+    // ========================================
+
+    function stopTimer() {
+
+      if (timerInterval === null) {
+        return;
+      }
+
+
+      clearInterval(timerInterval);
+
+      timerInterval = null;
+
+
+      elapsedSeconds =
+        Math.floor(
+          (Date.now() - startTime)
+          / 1000
+        );
+
+
+      updateTimer();
+
+
+      startButton.disabled = false;
+
+      stopButton.disabled = true;
+
+    }
+
+
+    // ========================================
+    // スタートボタン
+    // ========================================
+
+    startButton.addEventListener(
+      "click",
+      () => {
+
+        startTimer();
+
+      }
+    );
+
+
+    // ========================================
+    // ストップボタン
+    // ========================================
+
+    stopButton.addEventListener(
+      "click",
+      () => {
+
+        stopTimer();
+
+      }
+    );
+
+
+    // ========================================
+    // 日付変更
+    // ========================================
+
+    daySelect.addEventListener(
+      "change",
+      () => {
+
+        resetCurrentInput();
+
+        loadHistory();
+
+      }
+    );
+
+
+    // ========================================
+    // 入力をリセット
+    // ========================================
+
+    function resetCurrentInput() {
+
+      if (timerInterval !== null) {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+
+      }
+
+
+      startTime = null;
+
+      elapsedSeconds = 0;
+
+      results =
+        new Array(TOTAL_QUESTIONS).fill(null);
+
+
+      updateTimer();
+
+      updateScore();
+
+
+      startButton.disabled = false;
+
+      stopButton.disabled = true;
+
+      message.textContent = "";
+
+
+      createQuestionButtons();
+
+    }
+
+
+    // ========================================
+    // 記録データを作る
+    // ========================================
+
+    function createRecord() {
+
+      const day =
+        Number(daySelect.value);
+
+
+      const correct =
+        results.filter(
+          value => value === true
+        ).length;
+
+
+      return {
+
+        day: day,
+
+        time: formatTime(elapsedSeconds),
+
+        timeSeconds: elapsedSeconds,
+
+        correct: correct,
+
+        total: TOTAL_QUESTIONS,
+
+        results: [...results],
+
+        updatedAt: new Date().toISOString()
+
+      };
+
+    }
+
+
+    // ========================================
+    // Firebaseへ保存
+    // ========================================
+
+    async function saveRecord() {
+
+      message.textContent =
+        "保存しています...";
+
+      saveButton.disabled = true;
+
+
+      try {
+
+        // 10問すべて入力されているか確認
+        const unanswered =
+          results.some(
+            value => value === null
+          );
+
+
+        if (unanswered) {
+
+          message.textContent =
+            "10問すべての○×を入力してください。";
+
+          saveButton.disabled = false;
+
+          return;
+
+        }
+
+
+        // タイマーが動いていたら停止
+        if (timerInterval !== null) {
+
+          stopTimer();
+
+        }
+
+
+        const record =
+          createRecord();
+
+
+        const day =
+          record.day;
+
+
+        /*
+         * records/day1
+         * records/day2
+         * ...
+         *
+         * という形で保存する
+         */
+
+        const recordRef =
+          doc(
+            db,
+            "records",
+            `day${day}`
+          );
+
+
+        await setDoc(
+          recordRef,
+          record
+        );
+
+
+        message.textContent =
+          `${day}日目の記録を保存しました！`;
+
+
+        await loadHistory();
+
+      }
+      catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+          "保存に失敗しました。Firebaseの設定やFirestoreのルールを確認してください。";
+
+      }
+      finally {
+
+        saveButton.disabled = false;
+
+      }
+
+    }
+
+
+    // ========================================
+    // 保存ボタン
+    // ========================================
+
+    saveButton.addEventListener(
+      "click",
+      () => {
+
+        saveRecord();
+
+      }
+    );
+
+
+    // ========================================
+    // Firebaseから記録を取得
+    // ========================================
+
+    async function loadHistory() {
+
+      history.innerHTML =
+        '<div class="empty">読み込み中...</div>';
+
+
+      try {
+
+        const recordsRef =
+          collection(
+            db,
+            "records"
+          );
+
+
+        const snapshot =
+          await getDocs(
+            query(
+              recordsRef,
+              orderBy("day", "asc")
+            )
+          );
+
+
+        if (snapshot.empty) {
+
+          history.innerHTML =
+            '<div class="empty">まだ記録がありません。</div>';
+
+          return;
+
+        }
+
+
+        history.innerHTML = "";
+
+
+        snapshot.forEach(
+          (docSnapshot) => {
+
+            const data =
+              docSnapshot.data();
+
+
+            const item =
+              document.createElement("div");
+
+            item.className =
+              "history-item";
+
+
+            const main =
+              document.createElement("div");
+
+            main.className =
+              "history-main";
+
+
+            const day =
+              document.createElement("span");
+
+            day.textContent =
+              `${data.day}日目`;
+
+
+            const score =
+              document.createElement("span");
+
+            score.textContent =
+              `${data.correct} / ${data.total}`;
+
+
+            main.appendChild(day);
+
+            main.appendChild(score);
+
+
+            const detail =
+              document.createElement("div");
+
+            detail.className =
+              "history-detail";
+
+
+            const resultText =
+              (data.results || [])
+                .map(
+                  value =>
+                    value === true
+                      ? "○"
+                      : "×"
+                )
+                .join("");
+
+
+            detail.textContent =
+              `時間 ${data.time}　｜　${resultText}`;
+
+
+            item.appendChild(main);
+
+            item.appendChild(detail);
+
+
+            history.appendChild(item);
+
+          }
+        );
+
+      }
+      catch (error) {
+
+        console.error(error);
+
+        history.innerHTML =
+          '<div class="empty">記録を読み込めませんでした。</div>';
+
+      }
+
+    }
+
+
+    // ========================================
+    // 初期化
+    // ========================================
+
+    createQuestionButtons();
+
+    updateTimer();
+
+    updateScore();
+
+    loadHistory();
+
+  </script>
+
+</body>
+</html>
